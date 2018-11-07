@@ -4,9 +4,11 @@ plt3D:.p.import[`mpl_toolkits.mplot3d]`:Axes3D;
 
 plt:.p.import[`matplotlib]`:pyplot;
 
-cure:{[newqu;com;numR;sam;pointDist]
+cure:{[newqu;com;numR;sam;pointDist] 
+ 
  qu:newqu[0];
  newq:newqu[1];
+ 
  old:qu j:j,qu[;`closestIdx]j@:imin qu[j:where qu`valid]`closestDist;
  qu[j;`valid]:0b;
  
@@ -16,17 +18,19 @@ cure:{[newqu;com;numR;sam;pointDist]
  rep:(rep*1-com)+\:com*mean;
  new:`closestIdx`closestDist!(k;d)@\:imin d:{min sum each x*x:raze x-/:\:y}[rep]each qu[k:where qu`valid]`rep;
  qu[l;`closestIdx`closestDist]:(j0:first j;d k?l:exec i from qu where valid,closestDist>d);
+
  qu[j0]:update rep,idx,valid:1b from new;
  
- newq[k;`$string(j0)]:d;
- 
- j1:exec i from qu where valid,closestIdx in j;
- 
- newq[j0;`$string(j1)]:d exec i from (qu k) where closestIdx in j;
+ newq[j0;k]:d;
 
- n:where qu`valid;
+ j1:exec i from qu where valid,closestIdx in j;
+
+ newq[j1;j0]:d exec i from qu k where closestIdx in j;
  
- qu[j1;`closestIdx`closestDist]: {[newq;n;x] (newq[x]?min newq[x] n;min newq[x] n)}[newq;n]each `$string(j1);
+ n:where qu`valid;
+
+
+ qu[j1;`closestIdx`closestDist]:{[newq;n;x] (newq[x]?min newq[x] n;min newq[x] n)}[newq;n]each j1;
 
  (qu;newq)}
  
@@ -35,9 +39,8 @@ cureClust:{[sample;numRep;comp;numClust]
   queue:update idx:enlist each i,valid:1b from([]rep:enlist each sample);
   queue:queue,'flip`closestIdx`closestDist!
    flip{[pointDist;x;y]y[i],d i:imin d:pointDist[x]y}[pointDist]\:[j;j];
-  newq:flip (`$string til count pointDist,`num)!(pointDist upsert til count pointDist);
 
-  res:{[n;x]n<sum x[0]`valid}[numClust]cure[;comp;numRep;sample;pointDist]/(queue;newq);
+  res:{[n;x]n<sum x[0]`valid}[numClust]cure[;comp;numRep;sample;pointDist]/(queue;pointDist);
   delete valid from update pts:sample idx from select from res[0] where valid}
 
 

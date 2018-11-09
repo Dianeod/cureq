@@ -2,7 +2,7 @@ imax:{x?max x};
 imin:{x?min x};
 plt3D:.p.import[`mpl_toolkits.mplot3d]`:Axes3D;
 
-plt:.p.import[`matplotlib]`:pyplot;
+plt:.p.import`matplotlib.pyplot;
 
 cure:{[newqu;com;numR;sam;pointDist] 
  
